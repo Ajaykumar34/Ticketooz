@@ -27,54 +27,31 @@ const PublicEventCard = ({ event }: PublicEventCardProps) => {
   const saleEnded = isEventSaleEnded(event);
   const isSoldOut = event.is_sold_out;
   
-  // Get base price without convenience fees
+  // Get lowest base price across all categories
   const getDisplayPrice = () => {
     if (pricingLoading) {
       return event.price || 500;
     }
     
     if (pricing && pricing.length > 0) {
-      // Get base price without convenience fee
-      const generalPrice = pricing.find((p: any) => 
-        p.seat_categories?.name?.toLowerCase() === 'general'
-      );
-      
-      if (generalPrice) {
-        return generalPrice.base_price;
-      }
-      
-      const vipPrice = pricing.find((p: any) => 
-        p.seat_categories?.name?.toLowerCase() === 'vip'
-      );
-      
-      if (vipPrice) {
-        return vipPrice.base_price;
-      }
-      
-      // Return first available base price
-      return pricing[0]?.base_price || 500;
+      // Find the lowest base price among all categories
+      const lowestPrice = Math.min(...pricing.map((p: any) => p.base_price || 0));
+      return lowestPrice > 0 ? lowestPrice : 500;
     }
     
     return event.price || 500;
   };
   
-  // Get price category name for display
+  // Get the category name for the lowest priced category
   const getPriceCategoryName = () => {
     if (pricingLoading || !pricing || pricing.length === 0) return '';
     
-    const generalPrice = pricing.find((p: any) => 
-      p.seat_categories?.name?.toLowerCase() === 'general'
-    );
+    // Find the category with the lowest base price
+    const lowestPriceCategory = pricing.reduce((lowest: any, current: any) => {
+      return (current.base_price || 0) < (lowest.base_price || 0) ? current : lowest;
+    }, pricing[0]);
     
-    if (generalPrice) return 'General';
-    
-    const vipPrice = pricing.find((p: any) => 
-      p.seat_categories?.name?.toLowerCase() === 'vip'
-    );
-    
-    if (vipPrice) return 'VIP';
-    
-    return pricing[0]?.category_name || '';
+    return lowestPriceCategory?.seat_categories?.name || lowestPriceCategory?.category_name || 'Starting from';
   };
 
   return (
@@ -145,7 +122,9 @@ const PublicEventCard = ({ event }: PublicEventCardProps) => {
                 <div className="flex flex-col">
                   <span className="font-semibold text-green-600">₹{getDisplayPrice()}</span>
                   {getPriceCategoryName() && (
-                    <span className="text-xs text-gray-500">{getPriceCategoryName()}</span>
+                    <span className="text-xs text-gray-500">
+                      {pricing && pricing.length > 1 ? `${getPriceCategoryName()} onwards` : getPriceCategoryName()}
+                    </span>
                   )}
                 </div>
               </div>
