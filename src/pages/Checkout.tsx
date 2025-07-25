@@ -52,15 +52,31 @@ const Checkout = () => {
     'Lakshadweep', 'Puducherry'
   ];
 
-  // Fetch user profile data from database
+  // Fetch user profile data from database and set event state as default
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchUserProfileAndEventState = async () => {
       if (!user?.id) {
         setLoadingUserData(false);
         return;
       }
 
       try {
+        // First, get the event's venue state
+        let eventState = '';
+        if (event?.venue_id) {
+          const { data: venueData, error: venueError } = await supabase
+            .from('venues')
+            .select('state')
+            .eq('id', event.venue_id)
+            .single();
+
+          if (!venueError && venueData?.state) {
+            eventState = venueData.state;
+            console.log('[Checkout] Event venue state:', eventState);
+          }
+        }
+
+        // Then fetch user profile
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('first_name, last_name, phone, address, state')
@@ -69,16 +85,26 @@ const Checkout = () => {
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error fetching user profile:', error);
-        } else if (profile) {
-          setFormData(prev => ({
-            ...prev,
-            firstName: profile.first_name || '',
-            lastName: profile.last_name || '',
-            phone: profile.phone || '',
-            address: profile.address || '',
-            state: profile.state || ''
-          }));
         }
+
+        // Set form data with priority: event state > user profile state > empty
+        const defaultState = eventState || profile?.state || '';
+        
+        setFormData(prev => ({
+          ...prev,
+          firstName: profile?.first_name || '',
+          lastName: profile?.last_name || '',
+          phone: profile?.phone || '',
+          address: profile?.address || '',
+          state: defaultState
+        }));
+
+        console.log('[Checkout] Set default state:', defaultState, {
+          eventState,
+          userProfileState: profile?.state,
+          finalState: defaultState
+        });
+
       } catch (err) {
         console.error('Unexpected error fetching profile:', err);
       } finally {
@@ -86,8 +112,8 @@ const Checkout = () => {
       }
     };
 
-    fetchUserProfile();
-  }, [user?.id]);
+    fetchUserProfileAndEventState();
+  }, [user?.id, event?.venue_id]);
 
   if (!event) {
     navigate('/events');
@@ -368,7 +394,14 @@ const Checkout = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">State</label>
+                    <label className="block text-sm font-medium mb-2">
+                      State 
+                      {event?.venues?.name && (
+                        <span className="text-xs text-blue-600 ml-1">
+                          (Event Location State pre-selected)
+                        </span>
+                      )}
+                    </label>
                     <Select value={formData.state} onValueChange={handleStateChange} disabled={loadingUserData}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your state" />
