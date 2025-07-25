@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Eye, EyeOff, LogIn, ShieldX, Phone, Mail } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 interface LoginFormProps {
@@ -16,13 +16,12 @@ interface LoginFormProps {
 
 const LoginForm = ({ onLogin }: LoginFormProps) => {
   const { signIn } = useAuth();
+  const { toast } = useToast();
   const [emailOrMobile, setEmailOrMobile] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showBlockedDialog, setShowBlockedDialog] = useState(false);
-  const [blockReason, setBlockReason] = useState('');
 
   // Helper function to detect if input is email or mobile
   const isEmail = (input: string) => {
@@ -72,10 +71,13 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
         console.error('Login error:', error);
         
         // Check if it's a blocked user error
-        if (error.message && error.message.includes('blocked')) {
-          setBlockReason(error.message);
-          setShowBlockedDialog(true);
-          setError(''); // Clear regular error since we're showing dialog
+        if (error.message && (error.message.includes('blocked') || error.message.includes('Your account has been blocked'))) {
+          toast({
+            title: "Account Blocked",
+            description: "You are blocked by admin. Contact to administrator",
+            variant: "destructive",
+          });
+          setError(''); // Clear regular error since we're showing toast
         } else if (error.message?.includes('Invalid login credentials')) {
           setError('Invalid credentials. Please check your email/mobile and password.');
         } else if (error.message?.includes('Email not confirmed')) {
@@ -195,54 +197,6 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Blocked User Dialog */}
-      <Dialog open={showBlockedDialog} onOpenChange={setShowBlockedDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-              <ShieldX className="h-8 w-8 text-red-600" />
-            </div>
-            <DialogTitle className="text-xl font-semibold text-red-600">
-              Account Blocked
-            </DialogTitle>
-            <DialogDescription className="text-base text-gray-600 mt-2">
-              Your account has been temporarily blocked by an administrator.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <h4 className="font-medium text-red-800 mb-2">Reason:</h4>
-              <p className="text-red-700 text-sm">
-                {blockReason || 'No specific reason provided.'}
-              </p>
-            </div>
-            
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-800 mb-3">Contact Administrator</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Email: admin@dexotix.com</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  <span>Phone: +1 (555) 123-4567</span>
-                </div>
-              </div>
-            </div>
-            
-            <Button
-              onClick={() => setShowBlockedDialog(false)}
-              className="w-full"
-              variant="outline"
-            >
-              Close
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
