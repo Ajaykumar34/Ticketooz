@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAndUpdateSeatMapSoldOutStatus, isSeatMapEventSoldOut } from "@/utils/seatMapSoldOutUtils";
+import { checkAndUpdateRecurringEventSoldOutStatus, isRecurringEventSoldOut } from "@/utils/recurringEventSoldOutUtils";
 
 interface BookingData {
   quantity: number;
@@ -102,69 +103,10 @@ const isEventPast = (event: PublicEvent) => {
 const checkEventSoldOut = async (eventId: string, isRecurring: boolean = false) => {
   try {
     if (isRecurring) {
-      // For recurring events, check occurrence_ticket_categories
-      const { data: occurrences, error: occurrenceError } = await supabase
-        .from('event_occurrences')
-        .select('id')
-        .eq('event_id', eventId)
-        .gte('occurrence_datetime', new Date().toISOString());
-
-      if (occurrenceError) {
-        console.error('[checkEventSoldOut] Error fetching occurrences:', occurrenceError);
-        return false; // On error, assume not sold out
-      }
-
-      // If no occurrences exist yet, it's not sold out - they might still be generating
-      if (!occurrences || occurrences.length === 0) {
-        console.log('[checkEventSoldOut] No occurrences found yet, assuming not sold out');
-        return false;
-      }
-
-      // Check if all future occurrences are sold out by calculating real availability
-      let hasAvailableTickets = false;
-      for (const occurrence of occurrences) {
-        const { data: categories, error: categoriesError } = await supabase
-          .from('occurrence_ticket_categories')
-          .select('id, total_quantity')
-          .eq('occurrence_id', occurrence.id)
-          .eq('is_active', true);
-
-        if (categoriesError) {
-          console.error('[checkEventSoldOut] Error fetching categories for occurrence:', occurrence.id, categoriesError);
-          continue;
-        }
-
-        // For each category, calculate real availability
-        for (const category of categories || []) {
-          // Get confirmed bookings for this category
-          const { data: bookings, error: bookingsError } = await supabase
-            .from('bookings')
-            .select('quantity')
-            .eq('event_occurrence_id', occurrence.id)
-            .eq('occurrence_ticket_category_id', category.id)
-            .eq('status', 'Confirmed');
-
-          if (bookingsError) {
-            console.error('[checkEventSoldOut] Error fetching bookings for category:', category.id, bookingsError);
-            continue;
-          }
-
-          const bookedQuantity = bookings?.reduce((sum, booking) => sum + (booking.quantity || 0), 0) || 0;
-          const realAvailableQuantity = Math.max(0, category.total_quantity - bookedQuantity);
-
-          // If any category has available tickets, not sold out
-          if (realAvailableQuantity > 0) {
-            hasAvailableTickets = true;
-            break;
-          }
-        }
-
-        // If we found available tickets in any occurrence, break
-        if (hasAvailableTickets) break;
-      }
-      
-      console.log('[checkEventSoldOut] Recurring event sold out check result:', !hasAvailableTickets);
-      return !hasAvailableTickets;
+      // For recurring events, use the dedicated function and update the database
+      const isSoldOut = await checkAndUpdateRecurringEventSoldOutStatus(eventId);
+      console.log('[checkEventSoldOut] Recurring event sold out check result:', isSoldOut);
+      return isSoldOut;
     } else {
       // First, check if this is a seat map event
       const { data: eventData, error: eventError } = await supabase
