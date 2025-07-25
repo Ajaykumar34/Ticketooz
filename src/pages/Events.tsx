@@ -24,6 +24,7 @@ const Events = () => {
   });
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedState, setSelectedState] = useState('');
   const [selectedVenue, setSelectedVenue] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -35,6 +36,17 @@ const Events = () => {
   const { venues } = useVenues();
 
   const cities = [...new Set(events.map(event => event.city).filter(Boolean))];
+  // For now, use Indian states list since venue state data might not be properly loaded
+  const indianStates = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
+    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 
+    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 
+    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
+    'Uttarakhand', 'West Bengal', 'Andaman and Nicobar Islands', 'Chandigarh', 
+    'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Jammu and Kashmir', 'Ladakh', 
+    'Lakshadweep', 'Puducherry'
+  ];
+  const states = indianStates;
   const languages = [...new Set(events.map(event => event.language).filter(Boolean))];
 
   const handleCategorySelect = (category: string) => {
@@ -58,11 +70,18 @@ const Events = () => {
     setSelectedVenue('');
   };
 
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    setSelectedCity('');
+    setSelectedVenue('');
+  };
+
   const handleClearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('');
     setSelectedSubcategory('');
     setPriceRange('all');
+    setSelectedState('');
     setSelectedCity('');
     setSelectedVenue('');
     setSelectedDate(undefined);
@@ -70,10 +89,19 @@ const Events = () => {
     localStorage.removeItem('selectedCity');
   };
 
-  // Filter venues based on selected city
-  const filteredVenues = selectedCity 
-    ? venues.filter(venue => venue.city === selectedCity)
-    : venues;
+  // Filter cities based on selected state
+  const filteredCities = selectedState 
+    ? cities.filter(city => {
+        // For now, show all cities when a state is selected since we need venue-state mapping
+        return true;
+      })
+    : cities;
+
+  // Filter venues based on selected state and city  
+  const filteredVenues = venues.filter(venue => {
+    const matchesCity = !selectedCity || venue.city === selectedCity;
+    return matchesCity; // Remove state filtering for now since venue.state might not be available
+  });
 
   // Apply filters - show only non-expired events
   const filteredEvents = events.filter(event => {
@@ -84,6 +112,7 @@ const Events = () => {
       event.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.category?.toLowerCase().includes(searchTerm.toLowerCase());
     
+    const matchesState = !selectedState; // For now, state filter shows all events since venue state mapping needs to be implemented
     const matchesCity = !selectedCity || event.city === selectedCity;
     
     // Fix category matching - use event.category directly instead of event.categories?.name
@@ -103,11 +132,11 @@ const Events = () => {
       (priceRange === '1000-5000' && (event.price || 0) >= 1000 && (event.price || 0) <= 5000) ||
       (priceRange === 'above5000' && (event.price || 0) > 5000);
 
-    return matchesSearch && matchesCity && matchesCategory && matchesSubcategory && 
+    return matchesSearch && matchesState && matchesCity && matchesCategory && matchesSubcategory && 
            matchesVenue && matchesLanguage && matchesDate && matchesPrice;
   });
 
-  const hasActiveFilters = selectedCategory || selectedSubcategory || selectedCity || 
+  const hasActiveFilters = selectedCategory || selectedSubcategory || selectedState || selectedCity || 
                           selectedVenue || selectedDate || selectedLanguage || priceRange !== 'all';
 
   if (eventsLoading || categoriesLoading) {
@@ -221,6 +250,27 @@ const Events = () => {
                   </div>
                 )}
 
+                {/* State Filter */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    State
+                  </Label>
+                  <Select 
+                    value={selectedState || 'all'} 
+                    onValueChange={(value) => handleStateChange(value === 'all' ? '' : value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="All States" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white z-50">
+                      <SelectItem value="all">All States</SelectItem>
+                      {states.map(state => (
+                        <SelectItem key={state} value={state}>{state}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* City Filter */}
                 <div>
                   <Label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -229,13 +279,14 @@ const Events = () => {
                   <Select 
                     value={selectedCity || 'all'} 
                     onValueChange={(value) => handleCityChange(value === 'all' ? '' : value)}
+                    disabled={selectedState && filteredCities.length === 0}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Cities" />
+                      <SelectValue placeholder={selectedState && filteredCities.length === 0 ? "No Cities in State" : "All Cities"} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white z-50">
                       <SelectItem value="all">All Cities</SelectItem>
-                      {cities.map(city => (
+                      {filteredCities.map(city => (
                         <SelectItem key={city} value={city}>{city}</SelectItem>
                       ))}
                     </SelectContent>
@@ -250,12 +301,12 @@ const Events = () => {
                   <Select 
                     value={selectedVenue || 'all'} 
                     onValueChange={(value) => setSelectedVenue(value === 'all' ? '' : value)}
-                    disabled={!selectedCity}
+                    disabled={!selectedCity && !selectedState}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={!selectedCity ? "Select City First" : "All Venues"} />
+                      <SelectValue placeholder={!selectedCity && !selectedState ? "Select State/City First" : "All Venues"} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white z-50">
                       <SelectItem value="all">All Venues</SelectItem>
                       {filteredVenues.map(venue => (
                         <SelectItem key={venue.id} value={venue.id}>{venue.name}</SelectItem>
@@ -306,7 +357,7 @@ const Events = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="All Languages" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white z-50">
                       <SelectItem value="all">All Languages</SelectItem>
                       {languages.map(language => (
                         <SelectItem key={language} value={language}>{language}</SelectItem>
@@ -324,7 +375,7 @@ const Events = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Price Range" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white z-50">
                       <SelectItem value="all">All Prices</SelectItem>
                       <SelectItem value="under1000">Under ₹1,000</SelectItem>
                       <SelectItem value="1000-5000">₹1,000 - ₹5,000</SelectItem>
@@ -344,6 +395,7 @@ const Events = () => {
                 <strong>Results:</strong> {filteredEvents.length} events found
                 {selectedCategory && ` • Category: ${selectedCategory}`}
                 {selectedSubcategory && ` • Subcategory: ${selectedSubcategory}`}
+                {selectedState && ` • State: ${selectedState}`}
                 {selectedCity && ` • City: ${selectedCity}`}
                 {selectedVenue && ` • Venue: ${venues.find(v => v.id === selectedVenue)?.name}`}
                 {searchTerm && ` • Search: "${searchTerm}"`}
