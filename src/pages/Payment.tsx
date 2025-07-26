@@ -328,6 +328,21 @@ const Payment = () => {
             description: "Your test booking has been confirmed. This was a demo transaction.",
           });
 
+          // Fetch occurrence details for recurring events if needed
+          let occurrenceData = null;
+          if (eventOccurrenceId && event.is_recurring) {
+            try {
+              const { data: occurrence } = await supabase
+                .from('event_occurrences')
+                .select('occurrence_date, occurrence_time')
+                .eq('id', eventOccurrenceId)
+                .single();
+              occurrenceData = occurrence;
+            } catch (error) {
+              console.error('Error fetching occurrence data:', error);
+            }
+          }
+
           // Navigate to success page
           navigate('/booking-success', {
             state: {
@@ -345,7 +360,9 @@ const Payment = () => {
                 amount: totalPrice,
               },
               eventDate: bookingEventDate,
-              eventOccurrenceId: eventOccurrenceId
+              eventOccurrenceId: eventOccurrenceId,
+              occurrenceDate: occurrenceData?.occurrence_date,
+              occurrenceTime: occurrenceData?.occurrence_time
             }
           });
 
@@ -404,6 +421,21 @@ const Payment = () => {
           description: "Your test booking has been confirmed. This was a demo transaction.",
         });
 
+        // Fetch occurrence details for recurring events if needed
+        let occurrenceData = null;
+        if (eventOccurrenceId && event.is_recurring) {
+          try {
+            const { data: occurrence } = await supabase
+              .from('event_occurrences')
+              .select('occurrence_date, occurrence_time')
+              .eq('id', eventOccurrenceId)
+              .single();
+            occurrenceData = occurrence;
+          } catch (error) {
+            console.error('Error fetching occurrence data:', error);
+          }
+        }
+
         // Navigate to success page
         navigate('/booking-success', {
           state: {
@@ -421,7 +453,9 @@ const Payment = () => {
               amount: totalPrice,
             },
             eventDate: bookingEventDate,
-            eventOccurrenceId: eventOccurrenceId
+            eventOccurrenceId: eventOccurrenceId,
+            occurrenceDate: occurrenceData?.occurrence_date,
+            occurrenceTime: occurrenceData?.occurrence_time
           }
         });
       }
@@ -552,6 +586,21 @@ const Payment = () => {
                 description: "Your booking has been confirmed. Check your email for tickets.",
               });
 
+              // Fetch occurrence details for recurring events if needed
+              let occurrenceData = null;
+              if (eventOccurrenceId && event.is_recurring) {
+                try {
+                  const { data: occurrence } = await supabase
+                    .from('event_occurrences')
+                    .select('occurrence_date, occurrence_time')
+                    .eq('id', eventOccurrenceId)
+                    .single();
+                  occurrenceData = occurrence;
+                } catch (error) {
+                  console.error('Error fetching occurrence data:', error);
+                }
+              }
+
               // Navigate to success page
               navigate('/booking-success', {
                 state: {
@@ -569,7 +618,9 @@ const Payment = () => {
                     amount: totalPrice,
                   },
                   eventDate: bookingEventDate,
-                  eventOccurrenceId: eventOccurrenceId
+                  eventOccurrenceId: eventOccurrenceId,
+                  occurrenceDate: occurrenceData?.occurrence_date,
+                  occurrenceTime: occurrenceData?.occurrence_time
                 }
               });
             } catch (error: any) {
@@ -657,6 +708,21 @@ const Payment = () => {
                 description: "Your booking has been confirmed. Check your email for tickets.",
               });
 
+              // Fetch occurrence details for recurring events if needed
+              let occurrenceData = null;
+              if (eventOccurrenceId && event.is_recurring) {
+                try {
+                  const { data: occurrence } = await supabase
+                    .from('event_occurrences')
+                    .select('occurrence_date, occurrence_time')
+                    .eq('id', eventOccurrenceId)
+                    .single();
+                  occurrenceData = occurrence;
+                } catch (error) {
+                  console.error('Error fetching occurrence data:', error);
+                }
+              }
+
               // Navigate to success page
               navigate('/booking-success', {
                 state: {
@@ -674,7 +740,9 @@ const Payment = () => {
                     amount: totalPrice,
                   },
                   eventDate: bookingEventDate,
-                  eventOccurrenceId: eventOccurrenceId
+                  eventOccurrenceId: eventOccurrenceId,
+                  occurrenceDate: occurrenceData?.occurrence_date,
+                  occurrenceTime: occurrenceData?.occurrence_time
                 }
               });
             } catch (error: any) {

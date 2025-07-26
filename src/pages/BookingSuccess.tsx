@@ -18,7 +18,7 @@ const BookingSuccess = () => {
   const [ticketDetails, setTicketDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const { booking, event, selectedSeats, selectedGeneralTickets, customerInfo, totalPrice, basePrice, convenienceFee, taxes, eventOccurrenceId } = location.state || {};
+  const { booking, event, selectedSeats, selectedGeneralTickets, customerInfo, totalPrice, basePrice, convenienceFee, taxes, eventOccurrenceId, occurrenceDate, occurrenceTime } = location.state || {};
 
   console.log('[BookingSuccess] Received state:', {
     booking: booking ? 'present' : 'missing',
@@ -26,6 +26,8 @@ const BookingSuccess = () => {
     selectedSeats: selectedSeats ? selectedSeats.length : 'missing',
     selectedGeneralTickets: selectedGeneralTickets ? selectedGeneralTickets.length : 'missing',
     eventOccurrenceId,
+    occurrenceDate,
+    occurrenceTime,
     hasLocationState: !!location.state
   });
 
@@ -229,10 +231,10 @@ const BookingSuccess = () => {
 
   // Get display date from eventDate or fall back to event start_datetime
   const getDisplayDate = () => {
-    if (eventOccurrenceId && event.is_recurring) {
-      // For recurring events, we might have a specific occurrence date
-      // This would come from the booking process
-      return new Date(event.start_datetime);
+    if (eventOccurrenceId && event.is_recurring && occurrenceDate) {
+      // For recurring events, use the actual occurrence date
+      console.log('[BookingSuccess] Using occurrence date for recurring event:', occurrenceDate);
+      return new Date(occurrenceDate + (occurrenceTime ? `T${occurrenceTime}` : 'T' + event.start_datetime.split('T')[1]));
     }
     return new Date(event.start_datetime);
   };
@@ -282,7 +284,14 @@ const BookingSuccess = () => {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    <span>{displayDate.toLocaleDateString()} at {displayDate.toLocaleTimeString()}</span>
+                    <span>
+                      {displayDate.toLocaleDateString()} at {displayDate.toLocaleTimeString()}
+                      {event.is_recurring && eventOccurrenceId && (
+                        <Badge variant="outline" className="ml-2 text-xs">
+                          Recurring Event
+                        </Badge>
+                      )}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm">
                     <MapPin className="w-4 h-4 text-gray-500" />
