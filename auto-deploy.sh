@@ -9,7 +9,7 @@ set -e
 PROJECT_NAME="your-app"
 DEPLOY_PATH="/var/www/$PROJECT_NAME"
 LOG_FILE="/var/log/$PROJECT_NAME-deploy.log"
-HEALTHCHECK_URL="https://your-domain.com"
+HEALTHCHECK_URL="https://ticketooz.com"
 
 # Logging function
 log() {

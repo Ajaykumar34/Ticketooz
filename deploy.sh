@@ -114,7 +114,7 @@ if command -v certbot &> /dev/null; then
     read -r setup_ssl
     if [ "$setup_ssl" = "y" ]; then
         print_status "Setting up SSL..."
-        certbot --nginx -d your-domain.com -d www.your-domain.com --non-interactive --agree-tos --email your-email@example.com
+        certbot --nginx -d ticketooz.com -d www.ticketooz.com --non-interactive --agree-tos --email your-email@example.com
         print_success "SSL configured"
     fi
 fi
@@ -124,7 +124,7 @@ print_status "Cleaning up..."
 npm cache clean --force
 
 print_success "🎉 Deployment completed successfully!"
-echo -e "${GREEN}Your app is now live at: https://your-domain.com${NC}"
+echo -e "${GREEN}Your app is now live at: https://ticketooz.com${NC}"
 
 # Show final status
 print_status "Deployment Summary:"
@@ -132,7 +132,7 @@ echo "  • Project: $PROJECT_NAME"
 echo "  • Path: $DEPLOY_PATH"
 echo "  • Build: dist/"
 echo "  • Web Server: $(command -v nginx &> /dev/null && echo "Nginx" || echo "Apache/Other")"
-echo "  • SSL: $([ -f "/etc/letsencrypt/live/your-domain.com/fullchain.pem" ] && echo "Enabled" || echo "Manual setup required")"
+echo "  • SSL: $([ -f "/etc/letsencrypt/live/ticketooz.com/fullchain.pem" ] && echo "Enabled" || echo "Manual setup required")"
 
 print_status "Next steps:"
 echo "  1. Update domain name in nginx.conf/apache.conf"
