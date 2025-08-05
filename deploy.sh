@@ -114,7 +114,7 @@ if command -v certbot &> /dev/null; then
     read -r setup_ssl
     if [ "$setup_ssl" = "y" ]; then
         print_status "Setting up SSL..."
-        certbot --nginx -d ticketooz.com -d www.ticketooz.com --non-interactive --agree-tos --email your-email@example.com
+        certbot --nginx -d ticketooz.com -d www.ticketooz.com --non-interactive --agree-tos --email ajaykumarahirwar51@gmail.com
         print_success "SSL configured"
     fi
 fi
