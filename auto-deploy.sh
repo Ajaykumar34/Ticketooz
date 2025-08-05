@@ -6,7 +6,7 @@
 set -e
 
 # Configuration
-PROJECT_NAME="your-app"
+PROJECT_NAME="ticketooz"
 DEPLOY_PATH="/var/www/$PROJECT_NAME"
 LOG_FILE="/var/log/$PROJECT_NAME-deploy.log"
 HEALTHCHECK_URL="https://ticketooz.com"
