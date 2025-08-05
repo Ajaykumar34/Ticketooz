@@ -7,7 +7,7 @@ set -e  # Exit on any error
 
 # Configuration
 PROJECT_NAME="ticketooz"
-REPO_URL="https://github.com/yourusername/your-repo.git"  # UPDATE THIS with your actual GitHub repo URL
+REPO_URL="https://github.com/Ajaykumar34/Ticketooz.git"
 DEPLOY_PATH="/var/www/$PROJECT_NAME"
 BACKUP_PATH="/var/backups/$PROJECT_NAME"
 NGINX_SITE="/etc/nginx/sites-available/$PROJECT_NAME"
