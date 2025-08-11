@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import QRCode from 'qrcode';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TicketData {
@@ -911,51 +910,6 @@ export const generateTicketPDF = async (ticketData: TicketData & { eventOccurren
     currentY = addTextWithLineBreaks(doc, formattedBookingId, leftColumnX, currentY, leftColumnWidth, config.fontSize.body);
   }
   
-  // QR Code positioning - Handle pagination
-  const qrX = rightColumnX;
-  let qrY = guestStartY;
-  
-  // Check if QR code section needs a new page
-  if (checkPageSpace(doc, qrY, config.qrSize + 20)) {
-    qrY = addNewPageWithHeader(doc, config, contentWidth) + 20;
-  }
-  
-  // Generate QR code with proper verification URL
-  const verificationUrl = `${window.location.origin}/verify-ticket/${formattedBookingId}`;
-  console.log('Generated QR verification URL:', verificationUrl);
-  
-  try {
-    // Generate QR code as data URL with proper verification URL
-    const qrCodeDataUrl = await QRCode.toDataURL(verificationUrl, {
-      width: config.qrSize * 3,
-      margin: 1,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    });
-    
-    // Add QR code image to PDF
-    doc.addImage(qrCodeDataUrl, 'PNG', qrX, qrY, config.qrSize, config.qrSize);
-    
-    // Add QR code label
-    doc.setFontSize(config.fontSize.small);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Scan to verify ticket', qrX, qrY + config.qrSize + 5);
-    
-  } catch (error) {
-    console.error('Failed to generate QR code:', error);
-    // Fallback: Draw rectangle with text
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(1);
-    doc.rect(qrX, qrY, config.qrSize, config.qrSize);
-    
-    doc.setFontSize(config.fontSize.small);
-    doc.setFont('helvetica', 'bold');
-    doc.text('QR Code', qrX + config.qrSize/2 - 12, qrY + config.qrSize/2 + 2);
-    doc.text('Error', qrX + config.qrSize/2 - 8, qrY + config.qrSize/2 + 8);
-  }
-  
   // Payment Summary Section - Enhanced pricing display for recurring events
   currentY += 30;
   
@@ -1059,7 +1013,7 @@ export const generateTicketPDF = async (ticketData: TicketData & { eventOccurren
   
   // Important Notices Section - Handle pagination
   const noticesX = rightColumnX;
-  let noticesY = Math.max(currentY - 80, guestStartY + config.qrSize + 20);
+  let noticesY = Math.max(currentY - 80, guestStartY + 20);
   
   if (checkPageSpace(doc, noticesY, 60)) {
     noticesY = addNewPageWithHeader(doc, config, contentWidth);
