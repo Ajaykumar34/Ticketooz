@@ -306,8 +306,8 @@ const PublicHome = () => {
             <div>
               <Link to="/">
                 <img 
-                  src="/lovable-uploads/42be0531-8901-4c57-a434-d624766ed47b.png" 
-                  alt="Dexotix" 
+                  src="/lovable-uploads/749dfa90-a1d6-4cd0-87ad-4fec3daeb6d2.png" 
+                  alt="Ticketooz" 
                   className="h-12 w-auto mb-4 brightness-0 invert cursor-pointer"
                 />
               </Link>
@@ -338,7 +338,7 @@ const PublicHome = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">© 2024 Dexotix Events. All rights reserved.</p>
+            <p className="text-gray-400">© 2024 Ticketooz Events. All rights reserved.</p>
           </div>
         </div>
       </footer>

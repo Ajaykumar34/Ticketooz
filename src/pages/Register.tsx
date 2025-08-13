@@ -410,10 +410,10 @@ const Register = () => {
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto w-full flex items-center justify-center mb-4">
               <img 
-                src="/lovable-uploads/acc26df4-336b-415a-82df-33b5b18abc46.png"
-                alt="Dexotix Logo"
+                src="/lovable-uploads/749dfa90-a1d6-4cd0-87ad-4fec3daeb6d2.png"
+                alt="Ticketooz Logo"
                 className="h-20 w-auto"
-                style={{ maxHeight: 80, maxWidth: 250 }}
+                style={{ maxHeight: 80, maxWidth: 280 }}
               />
             </div>
             <CardTitle className="text-2xl font-bold">Create your account</CardTitle>

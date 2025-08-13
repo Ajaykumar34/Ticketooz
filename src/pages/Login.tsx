@@ -142,10 +142,10 @@ const Login = () => {
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto w-full flex items-center justify-center mb-4">
               <img 
-                src="/lovable-uploads/42be0531-8901-4c57-a434-d624766ed47b.png"
-                alt="Dexotix"
+                src="/lovable-uploads/749dfa90-a1d6-4cd0-87ad-4fec3daeb6d2.png"
+                alt="Ticketooz"
                 className="h-12 w-auto"
-                style={{ maxHeight: 48, maxWidth: 160 }}
+                style={{ maxHeight: 48, maxWidth: 180 }}
               />
             </div>
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>

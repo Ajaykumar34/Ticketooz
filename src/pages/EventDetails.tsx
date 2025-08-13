@@ -416,10 +416,10 @@ const EventDetails = () => {
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
                 <img 
-                  src="/lovable-uploads/42be0531-8901-4c57-a434-d624766ed47b.png"
-                  alt="Dexotix"
+                  src="/lovable-uploads/749dfa90-a1d6-4cd0-87ad-4fec3daeb6d2.png"
+                  alt="Ticketooz"
                   className="h-8 w-auto"
-                  style={{ maxHeight: 40, maxWidth: 120 }}
+                  style={{ maxHeight: 40, maxWidth: 150 }}
                 />
               </div>
               <Link to="/events" className="inline-flex items-center text-gray-600 hover:text-gray-900">
@@ -471,10 +471,10 @@ const EventDetails = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <img 
-                src="/lovable-uploads/42be0531-8901-4c57-a434-d624766ed47b.png"
-                alt="Dexotix"
+                src="/lovable-uploads/749dfa90-a1d6-4cd0-87ad-4fec3daeb6d2.png"
+                alt="Ticketooz"
                 className="h-8 w-auto"
-                style={{ maxHeight: 40, maxWidth: 120 }}
+                style={{ maxHeight: 40, maxWidth: 150 }}
               />
             </div>
             <Link to="/events" className="inline-flex items-center text-gray-600 hover:text-gray-900">
