@@ -55,10 +55,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             className="flex items-center cursor-pointer"
           >
             <img 
-              src="/lovable-uploads/42be0531-8901-4c57-a434-d624766ed47b.png"
-              alt="Dexotix"
+              src="/lovable-uploads/af5ee86c-c5a8-4449-bc78-953f597b6e22.png"
+              alt="Ticketooz"
               className="h-8 w-auto"
-              style={{ maxHeight: 40, maxWidth: 120 }}
+              style={{ maxHeight: 40, maxWidth: 180 }}
             />
           </div>
 

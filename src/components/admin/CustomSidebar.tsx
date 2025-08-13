@@ -147,8 +147,8 @@ const CustomSidebar = ({ onNavigation }) => {
           isCollapsed && "hidden"
         )}>
           <img 
-            src="/lovable-uploads/89628523-fd05-4137-ae43-67a220da7f76.png" 
-            alt="Dexotix Admin" 
+            src="/lovable-uploads/af5ee86c-c5a8-4449-bc78-953f597b6e22.png" 
+            alt="Ticketooz Admin" 
             className="h-8 w-auto object-contain mr-2"
           />
           <span className="font-bold text-lg text-blue-600">Admin</span>
