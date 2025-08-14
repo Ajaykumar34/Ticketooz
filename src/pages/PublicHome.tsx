@@ -8,6 +8,7 @@ import HomepageCarousel from '@/components/HomepageCarousel';
 import CategoryList from '@/components/CategoryList';
 import CitySelector from '@/components/CitySelector';
 import PublicEventCard from '@/components/PublicEventCard';
+import CookieConsentPopup from '@/components/CookieConsentPopup';
 import { usePopularEvents, useRegularEvents, useUpcomingEvents, useNonRecurringEvents, isEventSaleEnded, isEventPast } from '@/hooks/usePublicEvents';
 import { useCategories } from '@/hooks/useCategories';
 import { useAuth } from '@/hooks/useAuth';
@@ -326,6 +327,8 @@ const PublicHome = () => {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/terms" className="hover:text-white">Terms of Use</Link></li>
                 <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+                <li><Link to="/cookie-policy" className="hover:text-white">Cookie Policy</Link></li>
+                <li><Link to="/cookie-settings" className="hover:text-white">Cookie Settings</Link></li>
               </ul>
             </div>
             <div>
@@ -342,6 +345,9 @@ const PublicHome = () => {
           </div>
         </div>
       </footer>
+      
+      {/* Cookie Consent Popup */}
+      <CookieConsentPopup />
     </div>
   );
 };

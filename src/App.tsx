@@ -18,6 +18,8 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import TermsOfUse from "./pages/TermsOfUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
+import CookieSettings from "./pages/CookieSettings";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
@@ -52,6 +54,8 @@ const App = () => (
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/terms" element={<TermsOfUse />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="/cookie-settings" element={<CookieSettings />} />
             <Route path="/admin" element={<Index />} />
             <Route path="/create-admin" element={<CreateAdmin />} />
             <Route path="/verify-ticket/:bookingId" element={<VerifyTicket />} />
