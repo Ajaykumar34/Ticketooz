@@ -36,19 +36,10 @@ const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
       <div className="p-6 border-b border-border bg-gradient-to-r from-primary to-primary/80">
-        <div className="flex items-center gap-3">
-          <img 
-            src="/lovable-uploads/12e52c78-95a7-4aa4-9739-d4d478ff5b31.png" 
-            alt="Ticketooz Logo" 
-            className="h-10 w-auto"
-          />
-          <div>
-            <h2 className="text-2xl font-bold text-primary-foreground tracking-wide">
-              Ticketooz Admin Hub
-            </h2>
-            <p className="text-sm text-primary-foreground/80">Management Dashboard</p>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold text-primary-foreground tracking-wide">
+          Ticketooz Admin Hub
+        </h2>
+        <p className="text-sm text-primary-foreground/80 mt-1">Management Dashboard</p>
       </div>
       
       <nav className="flex-1 p-4 space-y-2">
