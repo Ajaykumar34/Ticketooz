@@ -35,8 +35,11 @@ const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
+      <div className="p-6 border-b border-border bg-gradient-to-r from-primary to-primary/80">
+        <h2 className="text-2xl font-bold text-primary-foreground tracking-wide">
+          Ticketooz Admin Hub
+        </h2>
+        <p className="text-sm text-primary-foreground/80 mt-1">Management Dashboard</p>
       </div>
       
       <nav className="flex-1 p-4 space-y-2">
