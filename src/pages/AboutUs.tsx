@@ -4,10 +4,36 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Users, Target, Award, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import SEOHead from '@/components/SEOHead';
 
 const AboutUs = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Dexotix",
+    "alternateName": "Ticketooz",
+    "url": "https://ticketooz.com",
+    "description": "Revolutionizing event discovery and ticketing in India",
+    "foundingDate": "2024",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN"
+    },
+    "sameAs": [
+      "https://facebook.com/ticketooz",
+      "https://twitter.com/ticketooz",
+      "https://instagram.com/ticketooz"
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title="About Dexotix - Revolutionizing Event Discovery"
+        description="Learn about Dexotix (Ticketooz), our mission to revolutionize event discovery and ticketing in India. Discover our story, values and impact."
+        keywords="about dexotix, ticketooz company, event platform, india events, our story"
+        structuredData={structuredData}
+      />
       <Navbar />
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import CategoryList from '@/components/CategoryList';
 import PublicEventCard from '@/components/PublicEventCard';
+import SEOHead from '@/components/SEOHead';
 import { usePublicEvents, isEventPast } from '@/hooks/usePublicEvents';
 import { useCategories } from '@/hooks/useCategories';
 import { useSubcategories } from '@/hooks/useSubcategories';
@@ -139,6 +140,49 @@ const Events = () => {
   const hasActiveFilters = selectedCategory || selectedSubcategory || selectedState || selectedCity || 
                           selectedVenue || selectedDate || selectedLanguage || priceRange !== 'all';
 
+  // Generate dynamic SEO content based on filters
+  const generateSEOTitle = () => {
+    let title = "Find Events";
+    if (selectedCity) title += ` in ${selectedCity}`;
+    if (selectedCategory) title += ` - ${selectedCategory}`;
+    return `${title} | Ticketooz`;
+  };
+
+  const generateSEODescription = () => {
+    let description = `Discover ${filteredEvents.length} amazing events`;
+    if (selectedCity) description += ` in ${selectedCity}`;
+    if (selectedCategory) description += ` in ${selectedCategory} category`;
+    description += ". Book tickets now with instant confirmation and best prices.";
+    return description;
+  };
+
+  // Generate structured data for events listing
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": `Events${selectedCity ? ` in ${selectedCity}` : ''}${selectedCategory ? ` - ${selectedCategory}` : ''}`,
+    "description": generateSEODescription(),
+    "numberOfItems": filteredEvents.length,
+    "itemListElement": filteredEvents.slice(0, 10).map((event, index) => ({
+      "@type": "Event",
+      "position": index + 1,
+      "name": event.name,
+      "description": event.description,
+      "startDate": event.start_datetime,
+      "location": {
+        "@type": "Place",
+        "name": event.venues?.name || "TBD",
+        "address": event.venues?.address || event.city
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": (event as any).ticket_price_min || 0,
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock"
+      }
+    }))
+  };
+
   if (eventsLoading || categoriesLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -154,6 +198,12 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title={generateSEOTitle()}
+        description={generateSEODescription()}
+        keywords={`events, tickets, ${selectedCategory || 'entertainment'}, ${selectedCity || 'India'}, concerts, shows`}
+        structuredData={structuredData}
+      />
       <Navbar onSearch={setSearchTerm} />
       
       <CategoryList 

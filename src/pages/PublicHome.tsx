@@ -9,6 +9,7 @@ import CategoryList from '@/components/CategoryList';
 import CitySelector from '@/components/CitySelector';
 import PublicEventCard from '@/components/PublicEventCard';
 import CookieConsentPopup from '@/components/CookieConsentPopup';
+import SEOHead from '@/components/SEOHead';
 import { usePopularEvents, useRegularEvents, useUpcomingEvents, useNonRecurringEvents, isEventSaleEnded, isEventPast } from '@/hooks/usePublicEvents';
 import { useCategories } from '@/hooks/useCategories';
 import { useAuth } from '@/hooks/useAuth';
@@ -120,8 +121,33 @@ const PublicHome = () => {
   const filteredUpcomingEvents = filterEventsByCategory(filterEventsByCity(upcomingEvents));
   const filteredNonRecurringEvents = filterEventsByCategory(filterEventsByCity(nonRecurringEvents));
 
+  // Generate structured data for homepage
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Ticketooz",
+    "description": "Book amazing events in your city - concerts, shows, workshops and more",
+    "url": "https://ticketooz.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ticketooz.com/events?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "sameAs": [
+      "https://facebook.com/ticketooz",
+      "https://twitter.com/ticketooz",
+      "https://instagram.com/ticketooz"
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title="Ticketooz - Book Amazing Events in Your City"
+        description="Discover and book tickets for concerts, shows, workshops and events in your city. Best prices, secure booking, instant confirmation."
+        keywords="event tickets, concerts, shows, workshops, book events online, entertainment tickets, India events"
+        structuredData={structuredData}
+      />
       <Navbar onSearch={setSearchTerm} />
       
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4">

@@ -12,6 +12,7 @@ import EventHeader from "@/components/EventHeader";
 import SimilarEventsSection from "@/components/SimilarEventsSection";
 import BookMyShowStyleBooking from "@/components/BookMyShowStyleBooking";
 import GeneralAdmissionBookingInterface from "@/components/GeneralAdmissionBookingInterface";
+import SEOHead from "@/components/SEOHead";
 import { checkAndUpdateSeatMapSoldOutStatus } from "@/utils/seatMapSoldOutUtils";
 
 interface Artist {
@@ -407,10 +408,60 @@ const EventDetails = () => {
     );
   }
 
+  // Generate structured data for event
+  const generateEventStructuredData = () => {
+    if (!event) return null;
+    
+    return {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": event.name,
+      "description": event.description || `Join us for ${event.name}`,
+      "startDate": event.start_datetime,
+      "endDate": event.end_datetime,
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": event.venues?.name || "Venue TBD",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": event.venues?.city || "TBD",
+          "addressRegion": event.venues?.state || "TBD",
+          "addressCountry": "IN"
+        }
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": event.ticket_price_min || 0,
+        "priceCurrency": "INR",
+        "availability": isSaleEnded() ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+        "validFrom": event.sale_start,
+        "validThrough": event.sale_end
+      },
+      "performer": event.artists?.map(artist => ({
+        "@type": "Person",
+        "name": artist.name
+      })) || [],
+      "organizer": {
+        "@type": "Organization",
+        "name": "Ticketooz",
+        "url": "https://ticketooz.com"
+      }
+    };
+  };
+
   // If this is a recurring event, show the BookMyShow-style booking interface with event header
   if (event?.is_recurring) {
     return (
       <div className="min-h-screen bg-gray-50">
+        <SEOHead
+          title={`${event.name} - Book Tickets`}
+          description={`Book tickets for ${event.name}. ${event.description || 'Amazing event experience awaits you.'} Best prices and instant confirmation.`}
+          keywords={`${event.name}, ${event.category}, ${event.venues?.city}, event tickets, book online`}
+          ogType="event"
+          structuredData={generateEventStructuredData()}
+        />
         <header className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -466,6 +517,13 @@ const EventDetails = () => {
   // For non-recurring events, always use seat map layout (no general admission option)
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title={`${event.name} - Book Tickets`}
+        description={`Book tickets for ${event.name}. ${event.description || 'Amazing event experience awaits you.'} Best prices and instant confirmation.`}
+        keywords={`${event.name}, ${event.category}, ${event.venues?.city}, event tickets, book online`}
+        ogType="event"
+        structuredData={generateEventStructuredData()}
+      />
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">

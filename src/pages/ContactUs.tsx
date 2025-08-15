@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Mail, Phone, MapPin, Send, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import SEOHead from '@/components/SEOHead';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -38,8 +39,33 @@ const ContactUs = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Ticketooz",
+    "description": "Get in touch with Ticketooz for support, inquiries, or feedback about our event booking platform.",
+    "url": "https://ticketooz.com/contact",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Ticketooz",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-XXX-XXX-XXXX",
+        "contactType": "customer service",
+        "email": "support@ticketooz.com",
+        "availableLanguage": ["English", "Hindi"]
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title="Contact Us - Get in Touch with Ticketooz"
+        description="Need help with event booking or have questions? Contact Ticketooz support team. We're here to help with your event ticketing needs."
+        keywords="contact ticketooz, customer support, event booking help, contact us"
+        structuredData={structuredData}
+      />
       <Navbar />
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
